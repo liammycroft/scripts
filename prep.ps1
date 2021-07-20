@@ -1,4 +1,4 @@
-﻿### Setup system for Fenergo Dev
+### Setup system for Dev
 
 # 1.0 Download Standalone Installers
 
@@ -27,7 +27,19 @@ $vspath = . 'C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.ex
 wsl --set-default-version 2
 winget install -e --id Canonical.Ubuntu
 
-# Init SQL DB and ES
+# 2.2 Init SQL DB and ES
 
 docker run -d --restart unless-stopped --name mssql -p 1433:1433 -e 'ACCEPT_EULA=Y' -e 'SA_PASSWORD=####.####.####' mcr.microsoft.com/mssql/server
 docker run -d --restart unless-stopped --name es732 -p 9200:9200 -e "discovery.type=single-node" docker.elastic.co/elasticsearch/elasticsearch-oss:7.3.2
+
+# 2.3 Self Signed Cert for IIS (Powershell as Admin)
+
+Import-Module IISAdministration;
+$hostname = hostname;
+$cert = New-SelfSignedCertificate -DnsName $hostname -CertStoreLocation cert:\LocalMachine\My -FriendlyName $hostname;
+$certHash = $cert.GetCertHash();
+$sm = Get-IISServerManager;
+$sm.Sites["Default Web Site"].Bindings.Add("*:443:", $certHash, "My", "0");
+$sm.CommitChanges();
+
+##TODO Copy certificate to trusted root ca
