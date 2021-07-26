@@ -42,4 +42,9 @@ $sm = Get-IISServerManager;
 $sm.Sites["Default Web Site"].Bindings.Add("*:443:", $certHash, "My", "0");
 $sm.CommitChanges();
 
+$trustedStore = New-Object -TypeName System.Security.Cryptography.X509Certificates.X509Store -ArgumentList 'Root','LocalMachine';
+$trustedStore.Open([System.Security.Cryptography.X509Certificates.OpenFlags]::ReadWrite);
+$trustedStore.Add($cert);
+$trustedStore.Close();
+
 ##TODO Copy certificate to trusted root ca
