@@ -46,5 +46,3 @@ $trustedStore = New-Object -TypeName System.Security.Cryptography.X509Certificat
 $trustedStore.Open([System.Security.Cryptography.X509Certificates.OpenFlags]::ReadWrite);
 $trustedStore.Add($cert);
 $trustedStore.Close();
-
-##TODO Copy certificate to trusted root ca
